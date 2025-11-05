@@ -9,7 +9,7 @@ function checkPalindromeNumber(num) {
     while(num>0){
         let digit = num % 10;
         reversedNumber = reversedNumber * 10 + digit;
-        num = Math.floor(num / 10);
+        num = Math.floor(num / 10);// Remove last digi
     }
     return reversedNumber===originalNumber; //this give true/false
 
