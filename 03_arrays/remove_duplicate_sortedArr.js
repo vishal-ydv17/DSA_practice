@@ -67,8 +67,16 @@ console.log(removeDuplicates([0,0,1,1,1,2,2,3,3,4])); //5
 //     return arr.length;
 // };
 
-// Technique 4 using Set and Array.from()
 
+
+// Technique 4 using Set and Array.from()
 // let nums = [1,1,2,2,3,3];
 // let uniqueArray = Array.from(new Set(nums));
 // // Result: [1, 2, 3]
+
+
+
+// Technique 5 using Set and Spread Operator
+// let nums = [1,1,2,2,3,3];
+// let uniqueArray = [...new Set(nums)];
+// Result: [1, 2, 3]
