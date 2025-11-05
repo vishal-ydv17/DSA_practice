@@ -69,7 +69,7 @@ console.log(removeDuplicates([0,0,1,1,1,2,2,3,3,4])); //5
 
 
 
-// Technique 4 using Set and Array.from()
+// Technique 4 using Set and Array.from() and convert set back to array
 // let nums = [1,1,2,2,3,3];
 // let uniqueArray = Array.from(new Set(nums));
 // // Result: [1, 2, 3]
