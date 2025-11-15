@@ -1,4 +1,4 @@
-```markdown
+
 # LeetCode Solution: Assign Cookies
 
 ## Problem
