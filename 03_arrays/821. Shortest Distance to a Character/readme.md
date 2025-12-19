@@ -14,7 +14,8 @@ Read my complete solution on LeetCode:
 - **Problem Type**: String, Two Pass  
 - **Difficulty**: Easy  
 - **Key Concept**: Two-pass / Distance tracking  
-- **Solution Summary**:  
+- **Solution Summary**: 
+Other than brute force 
   Make two passes over the string:
   - First pass: compute distances from left to right.
   - Second pass: update distances from right to left.  
