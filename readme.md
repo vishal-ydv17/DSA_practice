@@ -6,7 +6,7 @@
   -  The **logic** and step-by-step **solution flow**  
   -  The **optimized code** with time & space complexity analysis  
 - 🚀 Goal: To strengthen problem-solving, pattern recognition, and analytical skills through **daily consistency**.  
-- 🕒 Current streak: 250+ *(updating daily)*  
+- 🕒 Current streak: 300+ *(updating daily)*  
 - 📝 Check out all my solutions and detailed explanations here:  
   👉 [**LeetCode Profile — vishal-ydv17**](https://leetcode.com/u/vishal-ydv17/)  
 - 📈 **More content will be added each day — stay tuned for daily DSA updates!**
