@@ -12,6 +12,8 @@ Check out the problem description on LeetCode:
 Read my complete solution on LeetCode:
 👉 [https://leetcode.com/problems/remove-linked-list-elements/solutions/8436950/very-simple-sol-with-easy-explaination-w-iztx/](https://leetcode.com/problems/remove-linked-list-elements/solutions/8436950/very-simple-sol-with-easy-explaination-w-iztx/)
 
+👉[https://leetcode.com/problems/remove-linked-list-elements/](https://leetcode.com/problems/remove-linked-list-elements/solutions/8440051/2-easy-sol-with-logic-explaination-in-si-kjr5/)
+
 ## Quick Overview
 
 * **Problem Type**: Linked List
