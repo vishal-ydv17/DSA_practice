@@ -25,4 +25,4 @@
 
 ![LeetCode Stats](https://leetcard.jacoblin.cool/vishal-ydv17?theme=dark&font=Roboto&ext=heatmap)
 <br/>
-![GitHub Streak](https://github-readme-streak-stats.herokuapp.com/?user=vishalyadav&theme=dark)
+[![GitHub Streak](https://streak-stats.demolab.com/?user=vishalyadav&theme=dark)](https://git.io/streak-stats)
