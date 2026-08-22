@@ -1,5 +1,5 @@
 ## 🧠 Daily DSA Grind  
-> ### High in Protein💪🏼
+> ### High on Protein💪🏼
 > ### Fueled by Rage, Hunger and PlayList😈
 
 - 💻 I solve **at least one DSA problem every day** — first on **VS Code**, then push it to my **GitHub repository**.  
