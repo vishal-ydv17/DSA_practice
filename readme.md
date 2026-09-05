@@ -1,6 +1,6 @@
 ## 🧠 Daily DSA Grind  
 > ### High on Protein💪🏼
-> ### Fueled by Rage, Hunger and PlayList😈
+> ### Fueled by Rage, Hunger and PlayList 😈
 
 - 💻 I solve **at least one DSA problem every day** — first on **VS Code**, then push it to my **GitHub repository**.  
 - 🔍 After that, I solve the same problem on **LeetCode**, where I document:  
