@@ -1,0 +1,51 @@
+Here's how this cycle-detection algorithm works, and a bug worth catching before you rely on it.
+
+Building the graph
+
+Since the input is just a raw list of edges, the first step converts it into an adjacency list (graph). Because this is an undirected graph, each edge [x, y] gets added both ways: y is pushed into x's neighbor list, and x into y's.
+
+The core idea: DFS with parent tracking
+
+In an undirected graph, you can't detect a cycle just by noticing "I've already visited this neighbor" — because every edge is bidirectional, the node you just came from will always show up as an already-visited neighbor. That's not a cycle, that's just walking back the way you came.
+
+So the trick is to track each node's parent (the node you arrived from) alongside the usual visited set:
+
+If a neighbor hasn't been visited yet, recurse into it, passing the current node as its parent.
+If a neighbor has been visited, but it's not your parent, that means you've reached a node through a completely different path than the one that already discovered it — which is only possible if a cycle exists.
+
+Base case: dfs(0, -1) starts at node 0 with -1 as a placeholder parent (since node 0 has no real parent).
+
+
+
+
+
+
+The bug
+
+Inside the loop over neighbors, when a neighbor hasn't been visited yet, the code does:
+
+js
+return dfs(neighbor, curr);
+
+This returns immediately — regardless of whether that recursive call found a cycle or not. That means as soon as the first unvisited neighbor is processed, the loop stops entirely, and any other neighbors of curr never get checked at all.
+
+Concretely, this breaks as soon as a node has two unvisited branches where the cycle only exists in the second one. Example:
+
+edges = [[0,1],[0,4],[4,5],[5,6],[6,4]]
+
+Here node 4 is part of a real cycle (4→5→6→4), but node 0's first neighbor is 1 (a dead-end branch with no cycle). Because of the early return, the code returns dfs(1, 0)'s result (false) immediately and never even looks at neighbor 4 — so hasCycle would incorrectly report false even though a cycle exists.
+
+The fix — exactly what your own comment already suggests as the alternative:
+
+js
+if (!visited.has(neighbor)) {
+    if (dfs(neighbor, curr)) {
+        return true;
+    }
+} else if (neighbor != parent) {
+    return true;
+}
+
+This way, if one branch comes back false, the loop keeps going to check the other neighbors before giving up and returning false at the end.
+
+Complexity (once fixed): O(V + E) time and space, since every node and edge is visited at most once.

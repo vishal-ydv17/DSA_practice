@@ -1,25 +1,25 @@
-# LeetCode Solution: Find if Path Exists in Graph
+# LeetCode Solution: Implement Queue Using Stacks
 
 ## Problem
 
-📋 **1971. Find if Path Exists in Graph**
+📋 **232. Implement Queue Using Stacks**
 
 Check out the problem description on LeetCode:
-[Find if Path Exists in Graph](https://leetcode.com/problems/find-if-path-exists-in-graph/)
+[Implement Queue Using Stacks](https://leetcode.com/problems/implement-queue-using-stacks/description/)
 
 ## My Solution
 
 💡 **Detailed explanation with examples**
 
 Read my complete solution on LeetCode:
-[My Find if Path Exists in Graph Solution](https://leetcode.com/problems/find-if-path-exists-in-graph/solutions/8500314/easy-sol-with-logic-explaination-in-simp-rdax/)
+[My Implement Queue Using Stacks Solution](https://leetcode.com/problems/implement-queue-using-stacks/solutions/8511468/easy-sol-with-logic-explaination-in-simp-boxh/)
 
 ## Quick Overview
 
-* **Problem Type:** Graph, DFS, BFS
+* **Problem Type:** Queue, Stack, Data Structure
 * **Difficulty:** Easy
-* **Key Concept:** Graph Traversal & DFS
-* **Solution:** Build an adjacency list for the graph and use DFS to traverse from the source node. If we reach the destination node, a valid path exists; otherwise, no path exists.
+* **Key Concept:** Stack Manipulation
+* **Solution:** Use two stacks to implement queue behavior. Move elements between the stacks when needed so that the oldest element remains available for `pop()` and `peek()`, following the FIFO principle.
 
 **Visit the links above to see the full problem statement and my detailed solution!** 🚀
 
