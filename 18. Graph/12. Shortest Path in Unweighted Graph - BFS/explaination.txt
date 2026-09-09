@@ -1,0 +1,179 @@
+===========================================================
+SHORTEST DISTANCE IN UNWEIGHTED GRAPH (BFS - LEVEL ORDER)
+===========================================================
+
+PROBLEM
+-------
+Given a graph (as an adjacency list) and a source node, find the
+shortest distance (number of edges) from the source to every other
+node in the graph.
+
+
+WHY BFS?
+--------
+In an UNWEIGHTED graph, every edge has the same "cost" (1 step).
+BFS explores the graph level by level — first all nodes 1 edge away,
+then all nodes 2 edges away, and so on.
+
+Because of this level-by-level nature, the FIRST time BFS reaches a
+node, it is guaranteed to have reached it via the shortest possible
+path. This is why BFS (not DFS) is the right tool for shortest path
+in unweighted graphs.
+
+
+CORE IDEA
+---------
+1. Maintain a `dist[]` array where dist[i] = shortest distance from
+   src to node i. Initialize everything to Infinity (meaning "not
+   reached yet"), except dist[src] = 0 (distance from source to
+   itself is 0).
+
+2. Use a queue `q` to process nodes in the order they are discovered
+   (this is what makes it "level order traversal").
+
+3. Start by pushing the source node into the queue.
+
+4. While the queue is not empty:
+   a. Pop the front node -> call it `curr`.
+   b. Look at all of `curr`'s neighbors.
+   c. For each neighbor:
+      - If its distance is still Infinity (i.e., we have NOT visited
+        it yet), that means this is the first time we're reaching
+        it -> set dist[neighbor] = dist[curr] + 1, and push it into
+        the queue so we can explore ITS neighbors later.
+      - If its distance is already a real number (not Infinity), it
+        means we already found the shortest path to it earlier in
+        the BFS. We IGNORE it and do nothing, because any path we
+        find to it now (later in the traversal) can only be equal or
+        longer, never shorter.
+
+5. Once the queue is empty, `dist[]` contains the shortest distance
+   from src to every reachable node. Unreachable nodes stay Infinity.
+
+
+WHY "IGNORE IF ALREADY VISITED" IS SAFE
+----------------------------------------
+Since BFS processes nodes strictly in increasing order of distance
+(level by level), the very first time a node's distance gets set is
+guaranteed to be via the shortest route. Any later path that tries to
+reach that same node again would have to go through more or equal
+hops, so it can never improve on the value already stored. That's why
+checking `dist[neighbor] === Infinity` before updating is both:
+   - the "visited check" (prevents reprocessing / infinite loops)
+   - the "shortest path guarantee" (first write = shortest write)
+
+
+DRY RUN WITH THE GIVEN GRAPH
+------------------------------
+graph = [
+  [1, 2],  // node 0 -> connects to 1, 2
+  [3],     // node 1 -> connects to 3
+  [4],     // node 2 -> connects to 4
+  [5],     // node 3 -> connects to 5
+  [3],     // node 4 -> connects to 3
+  []       // node 5 -> no outgoing edges
+]
+src = 0
+
+Initial: dist = [0, Inf, Inf, Inf, Inf, Inf], q = [0]
+
+Step 1: curr = 0 (popped from q)
+  neighbors of 0 -> 1, 2
+  - dist[1] is Infinity -> set dist[1] = dist[0] + 1 = 1, push 1
+  - dist[2] is Infinity -> set dist[2] = dist[0] + 1 = 1, push 2
+  dist = [0, 1, 1, Inf, Inf, Inf], q = [1, 2]
+
+Step 2: curr = 1 (popped from q)
+  neighbors of 1 -> 3
+  - dist[3] is Infinity -> set dist[3] = dist[1] + 1 = 2, push 3
+  dist = [0, 1, 1, 2, Inf, Inf], q = [2, 3]
+
+Step 3: curr = 2 (popped from q)
+  neighbors of 2 -> 4
+  - dist[4] is Infinity -> set dist[4] = dist[2] + 1 = 2, push 4
+  dist = [0, 1, 1, 2, 2, Inf], q = [3, 4]
+
+Step 4: curr = 3 (popped from q)
+  neighbors of 3 -> 5
+  - dist[5] is Infinity -> set dist[5] = dist[3] + 1 = 3, push 5
+  dist = [0, 1, 1, 2, 2, 3], q = [4, 5]
+
+Step 5: curr = 4 (popped from q)
+  neighbors of 4 -> 3
+  - dist[3] is already 2 (NOT Infinity) -> IGNORE, do nothing
+  dist unchanged, q = [5]
+
+Step 6: curr = 5 (popped from q)
+  neighbors of 5 -> (none)
+  nothing happens
+  q = []
+
+Queue is now empty -> BFS complete.
+
+FINAL RESULT:
+dist = [0, 1, 1, 2, 2, 3]
+
+Meaning:
+  distance(0 -> 0) = 0
+  distance(0 -> 1) = 1
+  distance(0 -> 2) = 1
+  distance(0 -> 3) = 2
+  distance(0 -> 4) = 2
+  distance(0 -> 5) = 3
+
+
+CODE WALKTHROUGH (line by line intent)
+----------------------------------------
+let dist = new Array(graph.length).fill(Infinity);
+  -> create a distance array, one slot per node, all "unreached" (Infinity)
+
+dist[src] = 0;
+  -> distance from source to itself is always 0
+
+let q = [src];
+  -> queue starts with just the source node, ready to explore its neighbors
+
+while (q.length) { ... }
+  -> keep processing as long as there are nodes waiting to be explored
+
+let curr = q.shift();
+  -> take the FRONT of the queue (this is what makes it BFS, not DFS —
+     DFS would use a stack / push+pop from the same end instead)
+
+for (let neighbor of graph[curr]) { ... }
+  -> look at every node directly connected to curr
+
+if (dist[neighbor] === Infinity) { ... }
+  -> only process this neighbor if we have never reached it before
+
+dist[neighbor] = dist[curr] + 1;
+  -> the neighbor is exactly 1 step further than curr
+
+q.push(neighbor);
+  -> queue it up so we later explore ITS neighbors too (this is how the
+     "level order" spreads outward one ring at a time)
+
+
+COMPLEXITY
+----------
+Time complexity:  O(V + E)
+  where V = number of nodes (vertices), E = number of edges.
+  Every node is pushed/popped from the queue at most once, and every
+  edge is examined at most once across the whole traversal.
+
+Space complexity: O(V)
+  for the dist[] array and the queue, both bounded by the number of
+  nodes.
+
+
+KEY TAKEAWAYS
+-------------
+- BFS = level order traversal = correct tool for shortest path in
+  UNWEIGHTED graphs.
+- The queue naturally processes nodes in increasing order of distance
+  from the source.
+- "dist[neighbor] === Infinity" doubles as both the visited-check and
+  the guarantee that the first distance assigned is the shortest one.
+- Once a node's distance is set, it is NEVER updated again — updating
+  it later would only ever produce an equal or larger value, never a
+  smaller one, thanks to the level-by-level nature of BFS.

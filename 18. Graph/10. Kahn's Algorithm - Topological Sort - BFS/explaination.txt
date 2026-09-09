@@ -1,0 +1,235 @@
+===========================================================
+TOPOLOGICAL SORT USING BFS (KAHN'S ALGORITHM)
+===========================================================
+
+PROBLEM
+-------
+Given a directed graph, produce a topological ordering of its nodes —
+an ordering where for every directed edge u -> v, node u appears
+before node v in the result. This is only possible if the graph is a
+DAG (Directed Acyclic Graph) — i.e., it has NO cycles.
+
+This same algorithm also doubles as a CYCLE DETECTION tool: if we
+successfully build a topological order but the resulting array's
+length is less than the total number of nodes, that means some nodes
+never got included — which can only happen if a cycle prevented them
+from ever reaching indegree 0.
+
+
+WHY THIS WORKS (KAHN'S ALGORITHM / BFS APPROACH)
+--------------------------------------------------
+A node can only safely go into the topological order once ALL the
+nodes that point to it have already been placed. "Indegree" of a node
+= how many edges point INTO it (how many prerequisites it still has).
+
+- A node with indegree 0 has no unresolved prerequisites, so it's
+  safe to place it in the ordering right now.
+- Once we place a node, we "remove" it from the graph conceptually by
+  decrementing the indegree of all its neighbors (since one of their
+  prerequisites — this node — is now satisfied).
+- Whenever a neighbor's indegree drops to 0 as a result, it becomes
+  safe to place too, so we queue it up.
+
+This is essentially BFS, but instead of tracking "visited" with a
+boolean, we track "ready to visit" using the indegree count.
+
+
+CORE IDEA (3 STEPS)
+--------------------
+STEP 1: Build the indegree array.
+  For every node i, look at its neighbors (i -> neighbor edges), and
+  increment indegree[neighbor] once for each such edge. This tells us
+  how many incoming edges each node has.
+
+STEP 2: Seed the queue with all indegree-0 nodes.
+  Any node with indegree 0 has no prerequisites, so it can be placed
+  in the topological order immediately. Push all such nodes into the
+  queue to start the BFS.
+
+STEP 3: Process the queue.
+  While the queue is not empty:
+    a. Pop the front node -> call it `curr`.
+    b. Add `curr` to the answer array (it is now placed in the order).
+    c. For every neighbor of `curr`, decrement its indegree by 1
+       (since one of its prerequisites — curr — has now been
+       resolved/placed).
+    d. If a neighbor's indegree becomes 0, it means ALL of its
+       prerequisites are now satisfied, so push it into the queue.
+
+At the end, `ans` holds a valid topological order (if the graph is a
+DAG).
+
+
+CYCLE DETECTION
+----------------
+If the graph has a cycle, then every node inside that cycle depends
+(directly or indirectly) on another node inside the same cycle. None
+of them can ever reach indegree 0, because they're all waiting on
+each other. This means:
+  - Those nodes never get pushed into the queue.
+  - Those nodes never get added to `ans`.
+  - So `ans.length` ends up SMALLER than `n` (total node count).
+
+That's why the check is simply:
+    if (ans.length !== n) -> "Graph has cycle"
+    else                  -> "Graph has no cycle"
+
+
+DRY RUN WITH THE GIVEN GRAPH
+------------------------------
+n = 6
+adj = [
+  [],      // 0 -> (no outgoing edges)
+  [],      // 1 -> (no outgoing edges)
+  [3],     // 2 -> 3
+  [1],     // 3 -> 1
+  [0, 1],  // 4 -> 0, 1
+  [0, 2]   // 5 -> 0, 2
+]
+
+STEP 1: Build indegree array
+  Go through each node's edge list and increment the target's indegree:
+  - node 2 -> 3        => indegree[3]++
+  - node 3 -> 1         => indegree[1]++
+  - node 4 -> 0         => indegree[0]++
+  - node 4 -> 1         => indegree[1]++
+  - node 5 -> 0         => indegree[0]++
+  - node 5 -> 2         => indegree[2]++
+
+  Final indegree = [2, 2, 1, 1, 0, 0]
+  (index:            0  1  2  3  4  5)
+
+STEP 2: Seed queue with indegree-0 nodes
+  indegree[4] = 0 -> push 4
+  indegree[5] = 0 -> push 5
+  q = [4, 5]
+
+STEP 3: Process the queue
+
+  Pop curr = 4
+    ans = [4]
+    neighbors of 4 -> 0, 1
+    - indegree[0]-- => 2 - 1 = 1  (not 0 yet, don't push)
+    - indegree[1]-- => 2 - 1 = 1  (not 0 yet, don't push)
+    indegree now = [1, 1, 1, 1, 0, 0]
+    q = [5]
+
+  Pop curr = 5
+    ans = [4, 5]
+    neighbors of 5 -> 0, 2
+    - indegree[0]-- => 1 - 1 = 0  -> push 0
+    - indegree[2]-- => 1 - 1 = 0  -> push 2
+    indegree now = [0, 1, 0, 1, 0, 0]
+    q = [0, 2]
+
+  Pop curr = 0
+    ans = [4, 5, 0]
+    neighbors of 0 -> (none)
+    nothing changes
+    q = [2]
+
+  Pop curr = 2
+    ans = [4, 5, 0, 2]
+    neighbors of 2 -> 3
+    - indegree[3]-- => 1 - 1 = 0  -> push 3
+    indegree now = [0, 1, 0, 0, 0, 0]
+    q = [3]
+
+  Pop curr = 3
+    ans = [4, 5, 0, 2, 3]
+    neighbors of 3 -> 1
+    - indegree[1]-- => 1 - 1 = 0  -> push 1
+    indegree now = [0, 0, 0, 0, 0, 0]
+    q = [1]
+
+  Pop curr = 1
+    ans = [4, 5, 0, 2, 3, 1]
+    neighbors of 1 -> (none)
+    nothing changes
+    q = []
+
+Queue is empty -> BFS complete.
+
+FINAL RESULT:
+  ans = [4, 5, 0, 2, 3, 1]
+  ans.length = 6, n = 6  -> lengths match -> "Graph has no cycle"
+
+This ordering respects every edge:
+  2 -> 3  (2 appears before 3 -- yes)
+  3 -> 1  (3 appears before 1 -- yes)
+  4 -> 0  (4 appears before 0 -- yes)
+  4 -> 1  (4 appears before 1 -- yes)
+  5 -> 0  (5 appears before 0 -- yes)
+  5 -> 2  (5 appears before 2 -- yes)
+
+
+CODE WALKTHROUGH (line by line intent)
+----------------------------------------
+const indegree = new Array(n).fill(0);
+  -> one slot per node, tracks how many incoming edges it currently has
+
+for (let i = 0; i < n; i++) {
+  for (let neighbor of graph[i]) {
+    indegree[neighbor]++;
+  }
+}
+  -> for every edge i -> neighbor, that neighbor gains one more
+     prerequisite, so bump its indegree count
+
+let q = [];
+for (let i = 0; i < indegree.length; i++) {
+  if (indegree[i] === 0) q.push(i);
+}
+  -> any node that starts with 0 prerequisites is immediately safe to
+     place, so seed the queue with all of them
+
+let ans = [];
+while (q.length) {
+  let curr = q.shift();
+  ans.push(curr);
+  ...
+}
+  -> pop from the FRONT of the queue (BFS behavior), and record curr
+     as the next node in the topological order
+
+for (let neighbor of graph[curr]) {
+  indegree[neighbor]--;
+  if (indegree[neighbor] === 0) {
+    q.push(neighbor);
+  }
+}
+  -> "removing" curr from the graph by resolving one prerequisite for
+     each of its neighbors; any neighbor that just hit 0 remaining
+     prerequisites becomes safe to place, so queue it up
+
+if (ans.length !== n) {
+  console.log("Graph has cycle");
+} else {
+  console.log("Graph has no cycle");
+}
+  -> if some nodes never made it into ans, they were stuck waiting on
+     each other forever -> that's only possible if a cycle exists
+
+
+COMPLEXITY
+----------
+Time complexity:  O(V + E)
+  where V = number of nodes, E = number of edges.
+  Building indegree takes O(V + E), and the BFS processes each node
+  once and each edge once.
+
+Space complexity: O(V)
+  for the indegree array, the queue, and the ans array — all bounded
+  by the number of nodes.
+
+
+KEY TAKEAWAYS
+-------------
+- Kahn's Algorithm = topological sort via BFS, driven by indegree
+  counts instead of a visited boolean array.
+- A node becomes eligible for the ordering the moment ALL of its
+  prerequisites (incoming edges) have been resolved (indegree hits 0).
+- If ans.length === n at the end, the graph is a valid DAG.
+- If ans.length < n, some nodes were stuck in a cycle and could never
+  reach indegree 0 — this is a clean, free-of-cost cycle check that
+  comes as a side effect of the topological sort itself.
