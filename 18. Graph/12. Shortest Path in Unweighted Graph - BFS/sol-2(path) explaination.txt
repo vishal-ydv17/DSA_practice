@@ -1,0 +1,49 @@
+===========================================================
+SHORTEST PATH (BFS + PARENT TRACKING)
+===========================================================
+
+LOGIC
+-----
+Same BFS level-order idea as basic shortest distance, but this time
+we also store a `parent[]` array — for every node, we remember WHICH
+node discovered it first. Since BFS discovers nodes in shortest-path
+order, this parent link always points along a shortest path.
+
+Once BFS finishes, to get the actual path from src to any target:
+  - Start at `target` and keep jumping to `parent[target]`, then
+    `parent[parent[target]]`, and so on, pushing each node into an
+    array as we go.
+  - Stop when we reach `src`.
+  - Reverse the array (since we built it backwards, target -> src)
+    to get the path in src -> target order.
+
+If `parent[target]` is still `null` and target isn't the source
+itself, that node was never reached, so the path doesn't exist.
+
+
+EXAMPLE (from the given graph, src = 0)
+-----------------------------------------
+parent = [null, 0, 0, 1, 2, 3]
+
+Meaning:
+  node 1 was reached from node 0
+  node 2 was reached from node 0
+  node 3 was reached from node 1
+  node 4 was reached from node 2
+  node 5 was reached from node 3
+
+Path from 0 to 5:
+  start at 5 -> parent[5] = 3 -> parent[3] = 1 -> parent[1] = 0 (= src, stop)
+  collected (backwards): [5, 3, 1, 0]
+  reversed: [0, 1, 3, 5]  <- shortest path from 0 to 5
+
+
+COMPLEXITY
+----------
+shortestDistance (BFS):
+  Time:  O(V + E)  — every node and edge visited once
+  Space: O(V)      — dist[], parent[], and queue
+
+getPath (backtrack + reverse):
+  Time:  O(P)  — where P is the length of the path being reconstructed
+  Space: O(P)  — for the path array
