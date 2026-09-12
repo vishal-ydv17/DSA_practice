@@ -1,0 +1,36 @@
+===========================================================
+BELLMAN-FORD ALGORITHM (SHORTEST PATH WITH NEGATIVE WEIGHTS)
+===========================================================
+
+LOGIC
+-----
+Bellman-Ford finds shortest distances from a source to all other
+nodes, and unlike BFS/Dijkstra, it works even with NEGATIVE edge
+weights (just not negative weight CYCLES).
+
+Core idea: "relax" every edge (u, v, w) — meaning, check if going
+through u gives a shorter path to v than what we currently have:
+  if dist[u] + w < dist[v] -> update dist[v] = dist[u] + w
+
+We repeat this relaxation for ALL edges, V-1 times (V = number of
+vertices). Why V-1? Because the longest possible shortest path
+(without cycles) can have at most V-1 edges, so after V-1 full
+rounds of relaxing every edge, all shortest distances are guaranteed
+to be finalized, no matter which order the edges were processed in.
+
+OPTIMIZATION: if a full pass over all edges makes NO updates, the
+distances have already converged, so we can break out early instead
+of always running the full V-1 rounds.
+
+NEGATIVE WEIGHT CYCLE CHECK: run ONE more relaxation pass (the Vth
+pass) after the normal V-1 rounds. If ANY edge can still be relaxed
+(i.e., dist can still be improved), it means a negative weight cycle
+exists in the graph — because in a normal DAG-like shortest path,
+V-1 passes are always enough, so any further improvement possible
+means we're stuck in an infinite loop of ever-decreasing distances.
+
+
+COMPLEXITY
+----------
+Time:  O(V * E)  — V-1 (or up to V) rounds, each scanning all E edges
+Space: O(V)      — the dist array
